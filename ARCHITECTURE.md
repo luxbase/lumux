@@ -307,7 +307,7 @@ Stop and re-plan if any of these happens mid-rollout:
 | D5 | Body 16 mobile-first; one `data-density="dense"` container variant (14 body, 10 floor) | body 14 everywhere; user-selectable density | iOS input zoom; a selectable density was tried and retired |
 | D6 | **Target floor 44px everywhere, every pointer** (AAA 2.5.5) | 44 coarse / 32 fine; 24 fine | Maintainers' call under D23. Cost: dense consoles must re-measure their layouts |
 | D7 | Inter Variable + Geist Mono, both self-hosted | Geist Sans; system | CSP-safe, one file each, majority; Geist Mono for numeric telemetry |
-| D8 | Radix underneath dialogs/popovers/menus/tooltips, and `Select` (Cirrus-Inc/cuix#43) | Base UI; hand-rolled | Less code to own. `Select` moved off the native control because Safari draws its popup in the OS appearance, not the page theme |
+| D8 | Radix underneath dialogs/popovers/menus/tooltips, and `Select`  | Base UI; hand-rolled | Less code to own. `Select` moved off the native control because Safari draws its popup in the OS appearance, not the page theme |
 | D9 | Toast: errors sticky `role=alert`, success auto `role=status`, **lumux-owned `ToastProvider`, no dependency** (revised 2026-10-08; was a sonner wrapper) | sonner via a lumux wrapper | sonner has one `polite` live region, so errors cannot be `role=alert`, and the ×N merge, the cap of 4, "Dismiss all" and the reachable log had to be built on top of it anyway. The provider is ~150 lines |
 | D10 | **Radius control 4 / inset 2 / card 8; no pill badges or chips** (revised 2026-10-04; was 6 / 12) | 6 / 12; the source 12 | Maintainers' call: square and barely rounded. Cost: every app's chips and badges lose their pill shape |
 | D11 | Elevation flat/raised/overlay | a single shadow | Superset |

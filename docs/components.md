@@ -6,7 +6,6 @@
 `theme.css` carries `@source "./react"`, so Tailwind sees the classes the components use with no
 path in your CSS. Only an app that copies `dist/react` elsewhere adds its own `@source`.
 
-No product has migrated to these components yet; HIVE, an internal Cirrus product, is the first consumer.
 
 Every component here passes the harness (`npm run e2e`):
 - zero axe violations in the resting state (hover and pressed pairs are covered by

@@ -65,9 +65,8 @@
 
 ## Why lumux
 
-lumux is Cirrus's design system: themes, tokens and React components where accessibility is enforced by the build, not by eye. Six WCAG 2.2 AAA themes, 44px touch targets, every color pair checked on each commit. HIVE's screens are built on it.
+lumux is a design system: themes, tokens and React components where accessibility is enforced by the build, not by eye. Six WCAG 2.2 AAA themes, 44px touch targets, every color pair checked on each commit.
 
-**NOTE:** Same code as Cirrus-Inc/cuix. It lives temporarily in a public MIT repo under Danny's GitHub because cuix is private and Danny is not an org owner yet. Once he is, cuix goes public and lumux is deleted.
 
 Accessibility is usually a review step. In lumux it is a property of the system. A colour pair that fails contrast breaks the build. A control smaller than 44px cannot be built. A dark theme is authored, not inverted.
 
@@ -85,7 +84,6 @@ Every app that adopts lumux uses the same semantic tokens, mounts the same compo
 | Tokens & themes | Token source of truth, six AAA themes, contrast gate, focus and motion primitives | ✅ Shipped · [`docs/tokens.md`](./docs/tokens.md) |
 | Components | React 19 set on Radix: actions, forms, overlays, content, toasts | ✅ Shipped · [`docs/components.md`](./docs/components.md) |
 | Gates | className, disabled-title and nested-scroller checks, installable into any consumer | ✅ Shipped · [`docs/gates.md`](./docs/gates.md) |
-| Adoption | HIVE, an internal Cirrus product, is the first consumer (lumux `v0.5.0`); no other product has migrated yet | ⏳ In progress |
 | `1.0.0` | API freeze | ⏳ Planned |
 
 Pre-release: expect breaking changes before `1.0.0`. Pin an exact tag.
@@ -94,7 +92,6 @@ Pre-release: expect breaking changes before `1.0.0`. Pin an exact tag.
 
 | Consumer | What it is | lumux | Constraint |
 |---|---|---|---|
-| HIVE | Internal Cirrus business platform (React 19, Vite, Tailwind 4) | `v0.5.0` | Greenfield, so lumux from day one |
 
 ## Quick start
 
@@ -366,15 +363,6 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). In short: the decisions in [`ARCHITE
 | [SECURITY.md](./SECURITY.md) | How to report a vulnerability |
 
 ## Roadmap
-
-HIVE adopts lumux first and feeds fixes back; other Cirrus products follow, each upgrading to Tailwind v4 before it adopts. Open work is tracked in the private cuix repo (`Cirrus-Inc/cuix`, the CHANGELOG's reference convention). Next up:
-
-- `Cirrus-Inc/cuix#35`: make cuix public
-- `Cirrus-Inc/cuix#27`: a consumer smoke test that installs the packed tarball
-- `Cirrus-Inc/cuix#28`: rulesets protecting `main` and release tags
-- `Cirrus-Inc/cuix#40`: sticky toasts can obscure the focused element on phones (2.4.11 / 2.4.12)
-- `Cirrus-Inc/cuix#41`: TypeScript-aware pair derivation in the contrast gate
-- `Cirrus-Inc/cuix#42`: `release.sh` folds `[Unreleased]` into the new version section
 
 Then `1.0.0`, the API freeze. Bugs and requests from outside go in this repo's [issues](https://github.com/danieloceno/lumux/issues).
 

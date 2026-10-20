@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Email **daniel@hellocirrus.com** with a description, the affected tag and, if you have one, a minimal reproduction. Please do not open a public issue for a vulnerability.
+Email **daniel.oceno@gmail.com* with a description, the affected tag and, if you have one, a minimal reproduction. Please do not open a public issue for a vulnerability.
 
 We aim to acknowledge a report within a few working days and will tell you what we decide. There is no bug bounty.
 
