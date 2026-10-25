@@ -66,6 +66,16 @@ const optionClass = (active: boolean, selected: boolean, disabled?: boolean) =>
 // scroll-ok: a long result set is capped by its popup or bottom sheet; the query input remains reachable above it.
 const LIST = 'min-h-0 overflow-y-auto rounded-control border border-border-strong bg-surface p-1 text-foreground shadow-overlay';
 
+const TABBABLE = 'a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])';
+
+// The next (or previous) tab stop after `from`, as the browser would pick it.
+function focusBeside(from: HTMLElement, direction: 1 | -1) {
+  const stops = Array.from(document.querySelectorAll<HTMLElement>(TABBABLE)).filter(
+    (el) => !el.matches(':disabled, [type="hidden"]') && el.getClientRects().length > 0,
+  );
+  stops[stops.indexOf(from) + direction]?.focus();
+}
+
 const defaultFilter = <Option extends ComboboxOption>(options: Option[], query: string) => {
   const needle = query.trim().toLocaleLowerCase();
   return needle ? options.filter((option) => option.label.toLocaleLowerCase().includes(needle)) : options;
@@ -110,6 +120,8 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
   // What the input shows again when it closes without a choice, so its text always matches the submitted value.
   const committedLabel = useRef(initialLabel);
   const mobileHadOpen = useRef(false);
+  // Tab pressed inside the phone sheet: once the field is back, focus moves on from it (-1 = Shift+Tab).
+  const advance = useRef<1 | -1 | 0>(0);
   const restoringFocus = useRef(false);
   const id = useId();
   const listId = `${id}-listbox`;
@@ -168,6 +180,8 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
       mobileHadOpen.current = false;
       restoringFocus.current = true;
       input.current?.focus();
+      if (advance.current && input.current) focusBeside(input.current, advance.current);
+      advance.current = 0;
     }
   }, [coarse, open]);
 
@@ -243,6 +257,11 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
       dismiss();
     } else if (event.key === 'Tab' && open) {
       // Tab leaves an editable combobox; it must never make an accidental choice.
+      // The modal sheet traps focus, so there it closes first and then hops past the field.
+      if (coarse) {
+        event.preventDefault();
+        advance.current = event.shiftKey ? -1 : 1;
+      }
       dismiss();
     }
   };
@@ -289,6 +308,7 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
         {filtered.map((option, index) => {
           const selected = option.value === selectedValue;
           return (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- never focused: the input drives options via aria-activedescendant
             <div
               id={`${listId}-option-${index}`}
               key={option.value}
@@ -299,18 +319,13 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
               className={optionClass(current === index, selected, option.disabled)}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => select(option)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  select(option);
-                }
-              }}
             >
               {renderOption ? renderOption(option, { active: current === index, selected }) : option.label}
             </div>
           );
         })}
         {canCreate && (
+          // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- never focused: the input drives options via aria-activedescendant
           <div
             id={`${listId}-option-${filtered.length}`}
             role="option"
@@ -319,12 +334,6 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
             className={optionClass(current === filtered.length, false)}
             onMouseDown={(event) => event.preventDefault()}
             onClick={create}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                create();
-              }
-            }}
           >
             {typeof createLabel === 'function' ? createLabel(trimmed) : createLabel}
           </div>
@@ -349,6 +358,7 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
           <D.Portal>
             <D.Overlay className="fixed inset-0 z-modal bg-overlay-scrim">
               <D.Content
+                aria-describedby={undefined}
                 onCloseAutoFocus={(e) => e.preventDefault()}
                 className="fixed inset-x-0 bottom-0 z-modal flex max-h-combobox-sheet flex-col rounded-t-card bg-surface text-foreground shadow-overlay safe-bottom"
               >

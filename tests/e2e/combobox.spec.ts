@@ -72,6 +72,31 @@ test('Combobox in forced colors: selected item is Highlight, active position kee
   expect(outline).toEqual({ style: 'solid', width: '2px' });
 });
 
+test('Combobox is axe clean while loading and survives results replaced under the cursor', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await open(page);
+  const box = page.getByRole('combobox', { name: 'Company picker' });
+  await box.fill('sl');
+  const loading = page.getByText('Loading…');
+  await expect(loading).toBeVisible();
+  await page.keyboard.press('ArrowDown');
+  await expect(box).toHaveAttribute('aria-activedescendant', /option-0$/);
+  const { violations } = await new AxeBuilder({ page })
+    .include('input[role="combobox"]')
+    .include('[role="listbox"]')
+    .include(await loading.evaluate((el) => (el.id ? `#${el.id}` : '[role="status"]:has(svg)')))
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'wcag2aaa'])
+    .analyze();
+  expect(violations).toEqual([]);
+  await expect(loading).toHaveCount(0);
+  await expect(page.getByRole('option', { name: /Slate/ })).toHaveCount(0);
+  const described = await box.getAttribute('aria-activedescendant');
+  if (described) await expect(page.locator(`[id="${described}"]`)).toHaveCount(1);
+  await page.keyboard.press('Enter');
+  expect(errors).toEqual([]);
+});
+
 test('Combobox Escape closes popup and keeps focus on input', async ({ page }) => {
   await open(page);
   const box = page.getByRole('combobox', { name: 'Company picker' });
@@ -102,5 +127,24 @@ test.describe('on a coarse pointer', () => {
     await page.keyboard.press('Escape');
     await expect(sheet).toHaveCount(0);
     await expect(page.getByRole('combobox', { name: 'Company picker' })).toBeFocused();
+  });
+
+  test('Tab in the sheet closes it and moves past the field', async ({ page }) => {
+    await open(page);
+    const field = page.getByRole('combobox', { name: 'Company picker' });
+    await field.click();
+    await expect(page.getByRole('dialog', { name: 'Options' })).toBeVisible();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('dialog', { name: 'Options' })).toHaveCount(0);
+    await expect(field).not.toBeFocused();
+  });
+
+  test('opening the sheet logs no Radix accessibility warning', async ({ page }) => {
+    const warnings: string[] = [];
+    page.on('console', (message) => warnings.push(message.text()));
+    await open(page);
+    await page.getByRole('combobox', { name: 'Company picker' }).click();
+    await expect(page.getByRole('dialog', { name: 'Options' })).toBeVisible();
+    expect(warnings.filter((text) => /Description|aria-describedby/.test(text))).toEqual([]);
   });
 });

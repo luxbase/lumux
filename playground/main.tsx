@@ -43,6 +43,12 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
+const COMPANIES = [
+  { value: 'acme', label: 'Acme', detail: 'Buenos Aires' },
+  { value: 'lumux', label: 'Lumux', detail: 'Asunción' },
+  { value: 'northstar', label: 'Northstar', detail: 'Montevideo' },
+];
+
 function Forms() {
   const [notify, setNotify] = useState(true);
   const [plan, setPlan] = useState<string | undefined>('team');
@@ -50,15 +56,16 @@ function Forms() {
   const [company, setCompany] = useState<string>();
   const [companyQuery, setCompanyQuery] = useState('');
   const [companyLoading, setCompanyLoading] = useState(false);
-  const companies = [
-    { value: 'acme', label: 'Acme', detail: 'Buenos Aires' },
-    { value: 'lumux', label: 'Lumux', detail: 'Asunción' },
-    { value: 'northstar', label: 'Northstar', detail: 'Montevideo' },
-  ];
+  // Stable identities: a fresh array per render would read as new results to the Combobox.
+  const [companies, setCompanies] = useState([...COMPANIES, { value: 'slate', label: 'Slate Labs', detail: 'Cached' }]);
   useEffect(() => {
     if (!companyQuery) return;
     setCompanyLoading(true);
-    const timer = window.setTimeout(() => setCompanyLoading(false), 150);
+    // "sl…" is the slow search, so a test can look at the loading state; the stale cache entry vanishes when results land.
+    const timer = window.setTimeout(() => {
+      setCompanies(COMPANIES);
+      setCompanyLoading(false);
+    }, companyQuery.toLowerCase().startsWith('sl') ? 1500 : 150);
     return () => window.clearTimeout(timer);
   }, [companyQuery]);
   return (
