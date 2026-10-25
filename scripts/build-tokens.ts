@@ -153,6 +153,7 @@ const themeDecls: Record<string, string> = {
   '--spacing-rail': 'var(--lumux-sidebar-rail)',
   '--spacing-sheet': 'var(--lumux-sheet-width)',
   '--spacing-menu': 'var(--lumux-menu-min-width)',
+  '--spacing-combobox-sheet': 'var(--lumux-combobox-sheet-height)',
   '--spacing-card': 'var(--lumux-card-padding)',
   // max-w-* reads --container-*: max-w-sheet, max-w-dialog-md.
   '--container-sheet': 'var(--lumux-sheet-width)',

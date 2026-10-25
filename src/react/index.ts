@@ -18,6 +18,7 @@ export {
 export { Checkbox } from './Checkbox.tsx';
 export { Field, Input, NativeSelect, Textarea } from './Field.tsx';
 export { Select, type SelectOption, type SelectProps } from './Select.tsx';
+export { Combobox, type ComboboxOption, type ComboboxOptionState, type ComboboxProps } from './Combobox.tsx';
 export { describedBy, errorId, hintId } from './FieldMessages.tsx';
 export { RadioGroup, type RadioOption } from './RadioGroup.tsx';
 export { SegmentedControl, type Segment } from './SegmentedControl.tsx';

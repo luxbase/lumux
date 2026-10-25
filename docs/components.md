@@ -123,7 +123,7 @@ export default [...lumuxA11y /*, your config */];
 
 This is `eslint-plugin-jsx-a11y` strict, plus a ban on `title` on interactive elements.
 
-## Field · Input · Textarea · Select · NativeSelect
+## Field · Input · Textarea · Select · Combobox · NativeSelect
 
 ```tsx
 <Field label="Email" hint="We only use it for sign-in links." error={errors.email} required>
@@ -154,6 +154,17 @@ This is `eslint-plugin-jsx-a11y` strict, plus a ban on `title` on interactive el
   Items are 44px tall, dense included, like `Menu` items; the selected one shows a check and is
   painted `Highlight` in forced colors; the keyboard position carries the global focus ring, inset. No search, multi-select or virtualised lists: those
   are a separate component.
+- `Combobox` is that separate component: an editable async typeahead. It takes `options`
+  (`{ value, label, disabled? }`), controlled `value` / `onChange`, `loading`,
+  `onQueryChange`, `emptyMessage`, `renderOption`, and optionally `createLabel` plus
+  `onCreate(query)`. The default filter matches labels case-insensitively; pass
+  `filterOptions` when results come from a server. `renderOption(option, state)` can render
+  an avatar, primary label and secondary detail. Its input is the Field control and exposes
+  `role="combobox"`, `aria-expanded`, `aria-controls` and `aria-activedescendant`; results
+  are `role="option"` rows, each at least 44px. On a coarse pointer it opens in a modal
+  bottom sheet: the input is pinned above the scrolling list and the page scroll is locked.
+  Arrow keys move the virtual cursor, Home/End jump, Enter chooses (or creates), Escape
+  closes, and Tab closes then moves on without choosing. Typing reopens it.
 - `NativeSelect` is the previous `Select`: a native `<select>` with `<option>` children, for
   forms that want the platform picker on phones. Its popup follows the page's `color-scheme`
   (set on `:root` and per theme in `tokens.css`) in Chrome; Safari and mobile pickers follow
