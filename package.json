@@ -1,6 +1,6 @@
 {
   "name": "lumux",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Accessible-by-default CSS themes and React components: six WCAG 2.2 AAA themes, 44px targets, one semantic vocabulary",
   "keywords": [
     "design-system",

@@ -4,6 +4,8 @@ Every tag, newest first. Install a tag with `npm i github:danieloceno/lumux#vX.Y
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-25
+
 Breaking: `Select` is now a Radix Select with an `options` prop, not a native `<select>` with `<option>` children. Forms that want the platform control rename it to `NativeSelect`, which is the previous component unchanged. `@radix-ui/react-select` joins the optional peers (`^2`): the `lumux/react` barrel imports it, so a React consumer must `npm i @radix-ui/react-select` when it moves to this release, Select user or not, or its build fails to resolve it.
 
 - feat(react): `Combobox` typeahead with async loading, custom renderOption slot, create row and coarse-pointer bottom sheet (#9)
@@ -73,7 +75,8 @@ Phase 1: core day/night tokens at AAA, generated `tokens.css` / `theme.css` / `t
 - docs(tokens): adopt core day/night as the only palette at AAA
 - docs: README with Mermaid, badges and decision index
 
-[Unreleased]: https://github.com/danieloceno/lumux/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/danieloceno/lumux/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/danieloceno/lumux/releases/tag/v0.6.0
 [0.5.0]: https://github.com/danieloceno/lumux/releases/tag/v0.5.0
 [0.4.0]: https://github.com/danieloceno/lumux/releases/tag/v0.4.0
 [0.3.0]: https://github.com/danieloceno/lumux/releases/tag/v0.3.0
