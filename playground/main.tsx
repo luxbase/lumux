@@ -1,10 +1,11 @@
 import { ArrowRight, ExternalLink, LayoutGrid, List, Plus, Save, Search, Settings, Trash2 } from 'lucide-react';
-import { StrictMode, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   AppShell,
   Button,
   Checkbox,
+  Combobox,
   Field,
   Input,
   RadioGroup,
@@ -42,10 +43,31 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
+const COMPANIES = [
+  { value: 'acme', label: 'Acme', detail: 'Buenos Aires' },
+  { value: 'lumux', label: 'Lumux', detail: 'Asunción' },
+  { value: 'northstar', label: 'Northstar', detail: 'Montevideo' },
+];
+
 function Forms() {
   const [notify, setNotify] = useState(true);
   const [plan, setPlan] = useState<string | undefined>('team');
   const [view, setView] = useState<'list' | 'grid' | 'board'>('list');
+  const [company, setCompany] = useState<string>();
+  const [companyQuery, setCompanyQuery] = useState('');
+  const [companyLoading, setCompanyLoading] = useState(false);
+  // Stable identities: a fresh array per render would read as new results to the Combobox.
+  const [companies, setCompanies] = useState([...COMPANIES, { value: 'slate', label: 'Slate Labs', detail: 'Cached' }]);
+  useEffect(() => {
+    if (!companyQuery) return;
+    setCompanyLoading(true);
+    // "sl…" is the slow search, so a test can look at the loading state; the stale cache entry vanishes when results land.
+    const timer = window.setTimeout(() => {
+      setCompanies(COMPANIES);
+      setCompanyLoading(false);
+    }, companyQuery.toLowerCase().startsWith('sl') ? 1500 : 150);
+    return () => window.clearTimeout(timer);
+  }, [companyQuery]);
   return (
     <section aria-labelledby="forms-h" className="rounded-card border border-border bg-surface p-4">
       <h2 id="forms-h" className="mb-4 text-heading">
@@ -63,6 +85,24 @@ function Forms() {
         </Field>
         <Field label="Search">
           <Input type="search" icon={<Search />} placeholder="Name or email" autoComplete="off" />
+        </Field>
+        <Field label="Company picker" hint="Search, choose an existing company or create one.">
+          <Combobox
+            options={companies}
+            value={company}
+            onChange={setCompany}
+            onQueryChange={setCompanyQuery}
+            loading={companyLoading}
+            placeholder="Search companies"
+            createLabel={(query) => `Create “${query}”`}
+            onCreate={(query) => setCompany(`new:${query}`)}
+            renderOption={(option) => (
+              <span className="flex min-w-0 flex-col">
+                <span>{option.label}</span>
+                <span className="text-body-sm text-foreground-muted">{option.detail}</span>
+              </span>
+            )}
+          />
         </Field>
         <Field label="Country" hint="Where invoices are issued.">
           <Select

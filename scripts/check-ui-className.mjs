@@ -58,6 +58,7 @@ const OWNS = {
   LinkButton: CONTROL,
   Input: CONTROL,
   Select: CONTROL,
+  Combobox: CONTROL,
   NativeSelect: CONTROL,
   Textarea: CONTROL,
   Field: ['rhythm'],

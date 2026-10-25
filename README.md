@@ -229,7 +229,7 @@ Imported from `lumux/react`. Each one documents the accessibility behaviour it g
 |---|---|
 | Shell & theme | `AppShell`, `SkipLink`, `useDocumentTitle`, `ThemeProvider`, `useTheme`, `ThemeSwitcher`, `IconProvider` |
 | Actions | `Button`, `IconButton`, `LinkButton`, `ConfirmInline`, `Spinner` |
-| Forms | `Field`, `Input`, `Select`, `Textarea`, `Checkbox`, `RadioGroup`, `Switch`, `SegmentedControl` |
+| Forms | `Field`, `Input`, `Select`, `Combobox`, `NativeSelect`, `Textarea`, `Checkbox`, `RadioGroup`, `Switch`, `SegmentedControl` |
 | Overlays | `Dialog`, `DialogTrigger`, `DialogClose`, `Sheet`, `SheetTrigger`, `SheetClose`, `Drawer`, `Menu`, `Popover`, `Tooltip`, `TooltipProvider` (wrap the app once) |
 | Content | `Card`, `Badge`, `EmptyState` |
 | Feedback | `ToastProvider`, `useToast`, `ToastLog`, `useToastLog` |

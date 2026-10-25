@@ -40,6 +40,8 @@ export const SIZE = {
   'dialog-md': '35rem',
   'dialog-lg': '50rem',
   'menu-min-width': '12rem',
+  // Bottom-sheet typeahead: comfortably short on a phone, without exceeding its viewport.
+  'combobox-sheet-height': 'min(32rem, 85dvh)',
   // Card padding: 16, dense 12. The one spacing value dense changes by token.
   'card-padding': '1rem',
 };

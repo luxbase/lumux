@@ -7,6 +7,7 @@ import { renderToString } from 'react-dom/server';
 // Imported at run time: dist/ does not exist when `tsc --noEmit` runs on a fresh checkout.
 const built = '../dist/react/Field.js';
 const builtSelect = '../dist/react/Select.js';
+const builtCombobox = '../dist/react/Combobox.js';
 
 test('Field label targets the control in server-rendered HTML', async () => {
   const { Field, Input } = await import(built);
@@ -16,6 +17,17 @@ test('Field label targets the control in server-rendered HTML', async () => {
   const field = renderToString(h(Field, { label: 'Email', id: 'email', children: h(Input, {}) }));
   assert.match(field, /<label for="email"/);
   assert.match(field, /<input id="email"/);
+});
+
+test('Combobox renders a labelled editable combobox in server HTML', async () => {
+  const { Field } = await import(built);
+  const { Combobox } = await import(builtCombobox);
+  const html = renderToString(
+    h(Field, { label: 'Company', id: 'company', children: h(Combobox, { options: [{ value: 'a', label: 'Acme' }] }) }),
+  );
+  assert.match(html, /<label for="company"/);
+  assert.match(html, /<input[^>]*role="combobox"/);
+  assert.match(html, /<input[^>]*id="company"/);
 });
 
 test('Select renders a labelled combobox trigger and NativeSelect stays a <select>', async () => {

@@ -6,6 +6,7 @@ Every tag, newest first. Install a tag with `npm i github:danieloceno/lumux#vX.Y
 
 Breaking: `Select` is now a Radix Select with an `options` prop, not a native `<select>` with `<option>` children. Forms that want the platform control rename it to `NativeSelect`, which is the previous component unchanged. `@radix-ui/react-select` joins the optional peers (`^2`): the `lumux/react` barrel imports it, so a React consumer must `npm i @radix-ui/react-select` when it moves to this release, Select user or not, or its build fails to resolve it.
 
+- feat(react): `Combobox` typeahead with async loading, custom renderOption slot, create row and coarse-pointer bottom sheet (#9)
 - feat(react): `Select` on `@radix-ui/react-select`: the same themed popup in every browser (Safari's native popup followed the OS), items styled like `Menu` (44px, tokens, check on the selected one, `forced-selected` in forced colors), chevron trigger, `Field` wiring through the same props as `Input` so the label focuses the trigger; the native control stays as `NativeSelect`
 - chore(ci): `consumer-smoke` job (`npm run smoke:consumer`, also run by `scripts/release.sh` before tagging) packs the package, installs the tarball into a Vite + React 19 + Tailwind 4 app (`tests/consumer`) and fails on a missing `exports` target, types that do not resolve under `moduleResolution: bundler`, component classes Tailwind does not find, or an SSR `renderToString` of any exported component that breaks
 - docs: README accuracy pass for v0.5.0
