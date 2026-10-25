@@ -27,7 +27,15 @@ test('Combobox filters, selects, creates and lets Tab leave without selecting', 
   await box.fill('Acme');
   await page.keyboard.press('Tab');
   await expect(page.getByRole('listbox')).toHaveCount(0);
-  await expect(box).toHaveValue('Acme');
+  // Leaving without a choice restores the committed text, so it matches the submitted value.
+  await expect(box).toHaveValue('Nova');
+
+  await box.fill('lumux');
+  await expect(page.getByRole('option', { name: /Create/ })).toHaveCount(0);
+  await page.keyboard.press('ArrowUp');
+  await expect(box).toHaveAttribute('aria-activedescendant', /option-0$/);
+  await page.keyboard.press('Escape');
+  await expect(box).toHaveValue('Nova');
 });
 
 for (const theme of ['day', 'night'] as const) {
