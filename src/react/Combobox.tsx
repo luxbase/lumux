@@ -31,11 +31,20 @@ export type ComboboxProps<Option extends ComboboxOption = ComboboxOption> = {
   onQueryChange?: (query: string) => void;
   /** Shows a non-selectable loading row while async results are pending. */
   loading?: boolean;
+  /** Text of the loading row. */
+  loadingMessage?: ReactNode;
   /** Renders an option's contents (for example, avatar, name and company). */
   renderOption?: (option: Option, state: ComboboxOptionState) => ReactNode;
   /** Replaces the built-in case-insensitive label filter. */
   filterOptions?: (options: Option[], query: string) => Option[];
   emptyMessage?: ReactNode;
+  /**
+   * Opt in to a virtual cursor that starts on the first enabled option (or the create row when it is
+   * the only one) once the person has typed a search and nothing is active, so typing then Enter
+   * chooses it without an ArrowDown first. It follows async `options` as they arrive and waits while
+   * `loading`. Focus alone never highlights, so Enter on an untouched field still submits its form.
+   */
+  autoHighlight?: boolean;
   /** Text, or a formatter for text, in the optional create row. */
   createLabel?: ReactNode | ((query: string) => ReactNode);
   onCreate?: (query: string) => void;
@@ -92,9 +101,11 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
     onChange,
     onQueryChange,
     loading = false,
+    loadingMessage = 'Loading…',
     renderOption,
     filterOptions = defaultFilter,
     emptyMessage = 'No results.',
+    autoHighlight = false,
     createLabel,
     onCreate,
     placeholder,
@@ -136,6 +147,14 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
   const indexes = filtered.flatMap((option, index) => (option.disabled ? [] : [index])).concat(canCreate ? [filtered.length] : []);
   // Async results can be replaced under the cursor; a position that no longer exists is no position.
   const current = indexes.includes(active) ? active : -1;
+  const firstEnabled = indexes[0] ?? -1;
+
+  // Results can arrive after the keystroke, so this follows the visible rows rather than the edit.
+  // Only a typed search counts: the committed label (or an empty field) on focus is not one.
+  const searched = trimmed.length > 0 && query !== committedLabel.current;
+  useEffect(() => {
+    if (autoHighlight && open && searched && !loading && current < 0 && firstEnabled >= 0) setActive(firstEnabled);
+  }, [autoHighlight, open, searched, loading, current, firstEnabled]);
 
   // An externally selected value replaces the search phrase with its label once available.
   useEffect(() => {
@@ -300,7 +319,7 @@ export function Combobox<Option extends ComboboxOption = ComboboxOption>(allProp
     <div className={LIST}>
       {loading && (
         <div role="status" className="flex min-h-target items-center gap-2 px-3 text-body text-foreground-muted">
-          <LoaderCircle aria-hidden="true" className="animate-lumux-spin" /> Loading…
+          <LoaderCircle aria-hidden="true" className="animate-lumux-spin" /> {loadingMessage}
         </div>
       )}
       {!loading && filtered.length === 0 && !canCreate && <div className="flex min-h-target items-center px-3 text-body text-foreground-muted">{emptyMessage}</div>}

@@ -4,6 +4,9 @@ Every tag, newest first. Install a tag with `npm i github:danieloceno/lumux#vX.Y
 
 ## [Unreleased]
 
+- feat(react): `Combobox` `autoHighlight` prop (default off): once a search is typed, the cursor starts on the first enabled option, including when async `options` arrive after the keystroke, so typing then Enter chooses the first match; it waits while `loading` and never highlights on focus alone
+- feat(react): `Combobox` `loadingMessage` prop, the text of the loading row (default "Loading…")
+
 ## [0.6.0] - 2026-10-25
 
 Breaking: `Select` is now a Radix Select with an `options` prop, not a native `<select>` with `<option>` children. Forms that want the platform control rename it to `NativeSelect`, which is the previous component unchanged. `@radix-ui/react-select` joins the optional peers (`^2`): the `lumux/react` barrel imports it, so a React consumer must `npm i @radix-ui/react-select` when it moves to this release, Select user or not, or its build fails to resolve it.

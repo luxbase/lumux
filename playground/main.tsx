@@ -49,6 +49,53 @@ const COMPANIES = [
   { value: 'northstar', label: 'Northstar', detail: 'Montevideo' },
 ];
 
+// Module-level so the Combobox sees a stable filter: server results are shown as they arrive.
+const showAll = <T,>(options: T[]) => options;
+const OWNERS = [
+  { value: 'alder', label: 'Alder (away)', disabled: true },
+  { value: 'alma', label: 'Alma' },
+  { value: 'alvaro', label: 'Álvaro' },
+  { value: 'bruno', label: 'Bruno' },
+];
+
+// Both pickers opt in to autoHighlight: type, then Enter, with no ArrowDown.
+function OwnerPickers() {
+  const [owner, setOwner] = useState<string>();
+  const [remote, setRemote] = useState<string>();
+  const [remoteQuery, setRemoteQuery] = useState('');
+  const [remoteOptions, setRemoteOptions] = useState<typeof OWNERS>([]);
+  const [remoteLoading, setRemoteLoading] = useState(false);
+  useEffect(() => {
+    if (!remoteQuery) return;
+    setRemoteLoading(true);
+    // Results land well after the keystroke, as a server search would.
+    const timer = window.setTimeout(() => {
+      setRemoteOptions(OWNERS.filter((option) => option.label.toLowerCase().includes(remoteQuery.toLowerCase())));
+      setRemoteLoading(false);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [remoteQuery]);
+  return (
+    <>
+      <Field label="Owner picker">
+        <Combobox options={OWNERS} value={owner} onChange={setOwner} autoHighlight placeholder="Search owners" />
+      </Field>
+      <Field label="Remote owner picker">
+        <Combobox
+          options={remoteOptions}
+          value={remote}
+          onChange={setRemote}
+          onQueryChange={setRemoteQuery}
+          filterOptions={showAll}
+          loading={remoteLoading}
+          autoHighlight
+          placeholder="Search owners"
+        />
+      </Field>
+    </>
+  );
+}
+
 function Forms() {
   const [notify, setNotify] = useState(true);
   const [plan, setPlan] = useState<string | undefined>('team');
@@ -139,6 +186,7 @@ function Forms() {
         <Field label="Disabled field">
           <Input disabled defaultValue="Locked" />
         </Field>
+        <OwnerPickers />
         <div className="flex flex-col gap-2">
           <Checkbox label="Send me product updates" hint="About once a month." defaultChecked />
           <Checkbox label="Accept the terms" error="You need to accept the terms." />
