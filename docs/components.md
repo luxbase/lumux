@@ -164,7 +164,13 @@ This is `eslint-plugin-jsx-a11y` strict, plus a ban on `title` on interactive el
   are `role="option"` rows, each at least 44px. On a coarse pointer it opens in a modal
   bottom sheet: the input is pinned above the scrolling list and the page scroll is locked.
   Arrow keys move the virtual cursor, Home/End jump, Enter chooses (or creates), Escape
-  closes, and Tab closes then moves on without choosing. Typing reopens it.
+  closes, and Tab closes then moves on without choosing. Typing reopens it. By default a new
+  search has no cursor, so Enter does nothing until an arrow key lands on a row. Set
+  `autoHighlight` to start the cursor on the first enabled row (or on the create row when it is
+  the only one) once a search is typed and nothing is active, including when async `options`
+  arrive later. It waits while `loading`, never highlights on focus alone (so Enter on an
+  untouched field still submits its form), and `aria-activedescendant` follows it, so typing
+  then Enter chooses the first match. `loadingMessage` sets the loading row's text.
 - `NativeSelect` is the previous `Select`: a native `<select>` with `<option>` children, for
   forms that want the platform picker on phones. Its popup follows the page's `color-scheme`
   (set on `:root` and per theme in `tokens.css`) in Chrome; Safari and mobile pickers follow

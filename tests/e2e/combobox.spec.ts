@@ -38,6 +38,54 @@ test('Combobox filters, selects, creates and lets Tab leave without selecting', 
   await expect(box).toHaveValue('Nova');
 });
 
+test('Combobox without autoHighlight leaves Enter inert until an arrow key moves the cursor', async ({ page }) => {
+  await open(page);
+  const box = page.getByRole('combobox', { name: 'Company picker' });
+  await box.fill('lum');
+  await expect(page.getByRole('option', { name: 'Lumux Asunción' })).toBeVisible();
+  await expect(box).not.toHaveAttribute('aria-activedescendant', /.+/);
+  await page.keyboard.press('Enter');
+  await expect(box).toHaveValue('lum');
+  await expect(box).toHaveAttribute('aria-expanded', 'true');
+});
+
+test('Combobox autoHighlight: typing then Enter chooses the first enabled match', async ({ page }) => {
+  await open(page);
+  const box = page.getByRole('combobox', { name: 'Owner picker', exact: true });
+  await box.fill('al');
+  // "Alder (away)" matches first but is disabled, so the cursor starts on "Alma".
+  await expect(page.getByRole('option', { name: 'Alder (away)' })).toHaveAttribute('aria-disabled', 'true');
+  const alma = page.getByRole('option', { name: 'Alma' });
+  await expect(alma).toBeVisible();
+  await expect(box).toHaveAttribute('aria-activedescendant', (await alma.getAttribute('id'))!);
+  await page.keyboard.press('Enter');
+  await expect(box).toHaveValue('Alma');
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+});
+
+test('Combobox autoHighlight follows options that arrive after the keystroke, and waits while loading', async ({ page }) => {
+  await open(page);
+  const box = page.getByRole('combobox', { name: 'Remote owner picker', exact: true });
+  await box.fill('br');
+  await expect(page.getByText('Loading…')).toBeVisible();
+  await expect(box).not.toHaveAttribute('aria-activedescendant', /.+/);
+  const bruno = page.getByRole('option', { name: 'Bruno' });
+  await expect(bruno).toBeVisible();
+  await expect(box).toHaveAttribute('aria-activedescendant', (await bruno.getAttribute('id'))!);
+  await page.keyboard.press('Enter');
+  await expect(box).toHaveValue('Bruno');
+});
+
+test('Combobox autoHighlight never highlights on focus alone', async ({ page }) => {
+  await open(page);
+  const box = page.getByRole('combobox', { name: 'Owner picker', exact: true });
+  await box.focus();
+  await expect(page.getByRole('option', { name: 'Alma' })).toBeVisible();
+  await expect(box).not.toHaveAttribute('aria-activedescendant', /.+/);
+  await page.keyboard.press('Enter');
+  await expect(box).toHaveValue('');
+});
+
 for (const theme of ['day', 'night'] as const) {
   test(`Combobox is axe clean in ${theme} and its result rows are 44px`, async ({ page }) => {
     await open(page, theme);
